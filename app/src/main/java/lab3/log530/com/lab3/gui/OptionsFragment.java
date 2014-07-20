@@ -59,10 +59,6 @@ public class OptionsFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_options, container, false);
 
-        // Set the title view to show the page number.
-        /*((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                getString(R.string.title_template_step, mPageNumber + 1));*/
-
         Spinner spinnerB = (Spinner) rootView.findViewById(R.id.spinnerIAW);
         Spinner spinnerW = (Spinner) rootView.findViewById(R.id.spinnerIAB);
         // Create an ArrayAdapter using the string array and a default spinner layout

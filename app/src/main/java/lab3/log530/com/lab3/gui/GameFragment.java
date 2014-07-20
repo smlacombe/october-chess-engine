@@ -56,10 +56,6 @@ public class GameFragment extends Fragment {
         ViewGroup rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_game, container, false);
 
-        // Set the title view to show the page number.
-       /* ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                getString(R.string.title_template_step, mPageNumber + 1));*/
-
         return rootView;
     }
 

@@ -1,20 +1,15 @@
 package lab3.log530.com.lab3.gui;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-/**
- * Created by Apik3 on 2014-07-20.
- */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
-    //private Bitmap bmp;
+
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
     private final static int PIXEL_SIZE = 40;
@@ -63,10 +58,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
-        canvas.drawColor(Color.BLUE);
-
-        //canvas.drawBitmap(bmp, 10, 10, null);
 
     }
 }

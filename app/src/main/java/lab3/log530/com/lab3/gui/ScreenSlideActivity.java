@@ -37,11 +37,11 @@ import lab3.log530.com.lab3.R;
  * animating the current screen out (to the left) and the next screen in (from the right). The
  * reverse animation is played when the user presses the "previous" button.</p>
  *
- * @see ScreenSlidePageFragment
+ * see ScreenSlidePageFragment
  */
 public class ScreenSlideActivity extends FragmentActivity {
     /**
-     * The number of pages (wizard steps) to show in this demo.
+     * The number of pages (wizard steps) to show.
      */
     private static final int NUM_PAGES = 2;
 
@@ -85,13 +85,6 @@ public class ScreenSlideActivity extends FragmentActivity {
         menu.findItem(R.id.action_options).setEnabled(mPager.getCurrentItem() > 0);
         menu.findItem(R.id.action_game).setEnabled(mPager.getCurrentItem() < 1);
 
-        // Add either a "next" or "finish" button to the action bar, depending on which page
-        // is currently selected.
-        /*MenuItem item = menu.add(Menu.NONE, R.id.action_next, Menu.NONE,
-                (mPager.getCurrentItem() == mPagerAdapter.getCount() - 1)
-                        ? R.string.action_finish
-                        : R.string.action_next);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);*/
         return true;
     }
 
@@ -116,7 +109,7 @@ public class ScreenSlideActivity extends FragmentActivity {
     }
 
     /**
-     * A simple pager adapter that represents 5 {@link ScreenSlidePageFragment} objects, in
+     * A simple pager adapter that represents 1 {@link OptionsFragment} and 1 {@link GameFragment} objects, in
      * sequence.
      */
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -130,7 +123,6 @@ public class ScreenSlideActivity extends FragmentActivity {
                 return OptionsFragment.create(position);
             else
                 return GameFragment.create(position);
-            //return ScreenSlidePageFragment.create(position);
         }
 
         @Override
