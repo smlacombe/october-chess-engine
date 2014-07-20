@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ia_choice">
+        <item>Fool (2 plies)</item>
+        <item>Very Easy (3 plies)</item>
+        <item>Easy (4 plies)</item>
+        <item>Medium (5 plies)</item>
+        <item>Hard (6 plies)</item>
+        <item>Harder (7 plies)</item>
+        <item>Challenging (8 plies)</item>
+    </string-array>
+</resources>

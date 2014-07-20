@@ -58,7 +58,7 @@
       <fileset file="README"/>
       <zipgroupfileset refid="runtime.fileset"/>
       <manifest>
-        <attribute name="Main-Class" value="com.nullprogram.chess.Chess"/>
+        <attribute name="Main-Class" value="com.nullprogram.lab3.Chess"/>
       </manifest>
     </jar>
     <copy file="${applet.html}" todir="${dist.dir}"/>
@@ -83,7 +83,7 @@
 
   <target name="ga" depends="compile" description="Run genetic algorithm.">
     <java classpath="${build.classes.dir}" fork="true"
-          classname="com.nullprogram.chess.ai.OptimizeGA">
+          classname="OptimizeGA">
       <jvmarg value="-server"/>
     </java>
   </target>
