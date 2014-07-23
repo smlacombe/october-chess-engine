@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="@string/cpu_level"
-            android:id="@+id/textCpuLevelWhite" />
+            android:id="@+id/textCpuLevelBlack" />
 
         <Spinner
             android:layout_width="match_parent"

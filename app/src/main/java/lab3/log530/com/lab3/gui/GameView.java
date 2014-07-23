@@ -12,6 +12,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
+    static final int DARK = Color.rgb(209, 139, 71);
+    static final int LIGHT = Color.rgb(255, 206, 158);
     private final static int PIXEL_SIZE = 40;
 
 
@@ -24,20 +26,19 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         Canvas canvas = holder.lockCanvas(null);
 
-        canvas.drawColor(Color.BLUE);
+        canvas.drawColor(Color.WHITE);
 
         Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
         paint.setAntiAlias(true);
 
         for(int y = 0 ; y < nbCasesHeight ; y++) {
             for(int x = 0 ; x < nbCasesWidth ; x++) {
                 if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
-                    paint.setColor(Color.BLACK);
+                    paint.setColor(DARK);
                     canvas.drawRect(x*PIXEL_SIZE, y*PIXEL_SIZE, (x*PIXEL_SIZE)+PIXEL_SIZE, (y*PIXEL_SIZE)+PIXEL_SIZE, paint);
                 }
                 else {
-                    paint.setColor(Color.WHITE);
+                    paint.setColor(LIGHT);
                     canvas.drawRect(x*PIXEL_SIZE, y*PIXEL_SIZE, (x*PIXEL_SIZE)+PIXEL_SIZE, (y*PIXEL_SIZE)+PIXEL_SIZE, paint);
                 }
             }
