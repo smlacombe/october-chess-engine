@@ -9,6 +9,7 @@
     <string name="human">Human</string>
     <string name="computer">Computer</string>
     <string name="game_type">Game type :</string>
+    <string name="cpu_level">CPU level :</string>
     <string name="standard">Standard</string>
     <string name="gothic">Gothic</string>
     <string name="begin">Create new game</string>
