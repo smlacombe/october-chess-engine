@@ -19,13 +19,15 @@
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checkedButton="@+id/rBHumanW">
+            android:checkedButton="@+id/rBHumanW"
+            android:id="@+id/rGroupW">
 
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/human"
                 android:id="@+id/rBHumanW" />
+
 
             <RadioButton
                 android:layout_width="wrap_content"
@@ -58,7 +60,8 @@
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checkedButton="@+id/rBHumanB">
+            android:checkedButton="@+id/rBComputerB"
+            android:id="@+id/rGroupB">
 
             <RadioButton
                 android:layout_width="wrap_content"
