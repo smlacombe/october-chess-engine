@@ -25,7 +25,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
-    private final static int PIXEL_SIZE = 100;
+    private int pixelSize = 0;
 
     private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
@@ -141,7 +141,9 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Canvas canvas = holder.lockCanvas(null);
+
         canvas.drawColor(Color.WHITE);
+        pixelSize = canvas.getWidth()/8;
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -150,11 +152,11 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             for(int x = 0 ; x < nbCasesWidth ; x++) {
                 if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
                     paint.setColor(DARK);
-                    canvas.drawRect(x*PIXEL_SIZE, y*PIXEL_SIZE, (x*PIXEL_SIZE)+PIXEL_SIZE, (y*PIXEL_SIZE)+PIXEL_SIZE, paint);
+                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
                 }
                 else {
                     paint.setColor(LIGHT);
-                    canvas.drawRect(x*PIXEL_SIZE, y*PIXEL_SIZE, (x*PIXEL_SIZE)+PIXEL_SIZE, (y*PIXEL_SIZE)+PIXEL_SIZE, paint);
+                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
                 }
             }
         }
