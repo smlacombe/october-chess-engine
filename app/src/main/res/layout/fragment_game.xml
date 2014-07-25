@@ -13,7 +13,7 @@
         android:weightSum="1"
         android:measureWithLargestChild="false">
 
-        <lab3.log530.com.lab3.gui.GameView
+        <lab3.log530.com.lab3.gui.BoardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/gameboard"
