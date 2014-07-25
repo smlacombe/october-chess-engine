@@ -2,6 +2,8 @@ package lab3.log530.com.lab3;
 
 //TODO
 //import lab3.log530.com.lab3.gui.ChessFrame;
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,9 +18,7 @@ import java.util.logging.Logger;
  */
 public final class Chess {
 
-    /** This class's Logger. */
-    private static final Logger LOG =
-        Logger.getLogger("com.nullprogram.lab3.Chess");
+    private static final String LOG_TAG = "Chess";
 
     /** The program's running title, prefix only. */
     private static final String TITLE_PREFIX = "October Chess";
@@ -41,13 +41,13 @@ public final class Chess {
             String lnf = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(lnf);
         } catch (IllegalAccessException e) {
-            LOG.warning("Failed to access 'Look and Feel'");
+            Log.w("Failed to access 'Look and Feel'");
         } catch (InstantiationException e) {
-            LOG.warning("Failed to instantiate 'Look and Feel'");
+            Log.w("Failed to instantiate 'Look and Feel'");
         } catch (ClassNotFoundException e) {
-            LOG.warning("Failed to find 'Look and Feel'");
+            Log.w("Failed to find 'Look and Feel'");
         } catch (UnsupportedLookAndFeelException e) {
-            LOG.warning("Failed to set 'Look and Feel'");
+            Log.w("Failed to set 'Look and Feel'");
         }
         new ChessFrame();*/
     }
@@ -66,7 +66,7 @@ public final class Chess {
             version = in.readLine();
             in.close();
         } catch (java.io.IOException e) {
-            LOG.warning("failed to read version info");
+            Log.w(LOG_TAG, "failed to read version info");
             version = "";
         }
         return TITLE_PREFIX + " " + version;

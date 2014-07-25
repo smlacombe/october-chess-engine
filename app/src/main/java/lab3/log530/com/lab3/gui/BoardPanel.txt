@@ -357,7 +357,7 @@ public class BoardPanel extends JComponent
         try {
             latch.await();
         } catch (InterruptedException e) {
-            LOG.warning("BoardPanel interrupted during turn.");
+            Log.w("BoardPanel interrupted during turn.");
         }
         return selectedMove;
     }

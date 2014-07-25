@@ -1,5 +1,7 @@
 package lab3.log530.com.lab3;
 
+import android.util.Log;
+
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Logger;
@@ -12,9 +14,7 @@ import java.util.logging.Logger;
  */
 public class Game implements Runnable {
 
-    /** This class's Logger. */
-    private static final Logger LOG =
-        Logger.getLogger("com.nullprogram.lab3.Game");
+    private static final String LOG_TAG = "Game";
 
     /** Conversion from milliseconds to seconds. */
     private static final double MSEC_TO_SEC = 1000.0;
@@ -207,7 +207,7 @@ public class Game implements Runnable {
      * @param message  new status message
      */
     public final void setStatus(final String message) {
-        LOG.info("status: " + message);
+        Log.i(LOG_TAG, "status: " + message);
         if (message == null) {
             throw new IllegalArgumentException();
         }
@@ -230,7 +230,7 @@ public class Game implements Runnable {
      * @param value  current progress (0.0-1.0)
      */
     public final void setProgress(final float value) {
-        LOG.finest("Game progress: " + value);
+        Log.i(LOG_TAG, "Game progress: " + value);
         progress = value;
         if (value == 0) {
             progressStart = System.currentTimeMillis();

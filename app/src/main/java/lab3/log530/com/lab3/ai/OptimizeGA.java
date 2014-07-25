@@ -135,8 +135,8 @@ public class OptimizeGA implements GameListener {
      * @param blackConf config for the black player
      */
     private void launch(final Config whiteConf, final Config blackConf) {
-        LOG.info(whiteConf.toString());
-        LOG.info(blackConf.toString());
+        Log.i(LOG_TAG, whiteConf.toString());
+        Log.i(LOG_TAG, blackConf.toString());
         Board board = new StandardBoard();
         Game game = new Game(board);
         Player white = new Minimax(game, whiteConf.getProperties());
@@ -154,21 +154,21 @@ public class OptimizeGA implements GameListener {
         Game game = e.getGame();
         if (game.isDone()) {
             if (game.getWinner() == Piece.Side.WHITE) {
-                LOG.info("White wins.");
+                Log.i(LOG_TAG, "White wins.");
                 adir = 1;
                 bdir = -1;
             } else if (game.getWinner() == Piece.Side.BLACK) {
-                LOG.info("Black wins.");
+                Log.i(LOG_TAG, "Black wins.");
                 adir = -1;
                 bdir = 1;
             } else {
-                LOG.info("Stalemate.");
+                Log.i(LOG_TAG, "Stalemate.");
                 adir = 0;
                 bdir = 0;
             }
             doScore = true;
         } else if (game.getBoard().moveCount() > MAX_MOVES) {
-            LOG.info("Game timeout!");
+            Log.i(LOG_TAG, "Game timeout!");
             game.end();
             doScore = true;
             adir = -1;

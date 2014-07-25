@@ -6,9 +6,13 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import lab3.log530.com.lab3.Board;
+import lab3.log530.com.lab3.GameEvent;
+import lab3.log530.com.lab3.GameListener;
+import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.Position;
 import lab3.log530.com.lab3.MoveList;
 import lab3.log530.com.lab3.Piece;
@@ -16,13 +20,14 @@ import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
 import android.graphics.drawable.shapes.RoundRectShape;
 
-public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
+public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
     private final static int PIXEL_SIZE = 100;
 
+    private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
     private static final double TILE_SIZE = 200.0;
 
@@ -73,6 +78,14 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
     /** The move selected by the player. */
     private Move selectedMove;
 
+    @Override
+    public final void gameEvent(final GameEvent e) {
+        board = e.getGame().getBoard();
+        if (e.getType() != GameEvent.STATUS) {
+            invalidate();
+        }
+    }
+
     /** The interaction modes. */
     private enum Mode {
         /** Don't interact with the player. */
@@ -96,6 +109,33 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
     private void updateSize() {
         setMinimumWidth(MIN_SIZE * board.getWidth());
         setMinimumHeight(MIN_SIZE * board.getHeight());
+    }
+
+    /**
+     * Change the board to be displayed.
+     *
+     * @param b the new board
+     */
+    public final void setBoard(final Board b) {
+        board = b;
+        updateSize();
+        invalidate();
+    }
+
+    @Override
+    public final Move takeTurn(final Board turnBoard,
+                               final Piece.Side currentSide) {
+        latch = new CountDownLatch(1);
+        board = turnBoard;
+        side = currentSide;
+        invalidate();
+        mode = Mode.PLAYER;
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Log.w(LOG_TAG, "BoardPanel interrupted during turn.");
+        }
+        return selectedMove;
     }
 
     @Override

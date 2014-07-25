@@ -2,6 +2,7 @@ package lab3.log530.com.lab3.gui;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,10 @@ import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Game;
+import lab3.log530.com.lab3.GameEvent;
+import lab3.log530.com.lab3.GameListener;
 import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.R;
 import lab3.log530.com.lab3.ai.Minimax;
@@ -25,7 +29,7 @@ import lab3.log530.com.lab3.boards.EmptyBoard;
  * create an instance of this fragment.
  *
  */
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements GameListener {
     /**
      * The argument key for the page number this fragment represents.
      */
@@ -61,32 +65,33 @@ public class GameFragment extends Fragment {
         return fragment;
     }
 
+    public Player getDisplay()
+    {
+        return display;
+    }
+
     /**
      * Set up a new game.
      */
-    public final void newGame() {
-        // Todo: récupérer la game créée dans OptionsFragment
-/*
-        if (newGame == null) {
-            return;
-        }
-        if (game != null) {
-            game.end();
-        }
-        game = newGame;
+    public final void newGame(Game game) {
         Board board = game.getBoard();
         display.setBoard(board);
         display.invalidate();
-        setSize(getPreferredSize());
+        //setSize(getPreferredSize());
 
-        progress.setGame(game);
+        //progress.setGame(game);
         game.addGameListener(this);
         game.addGameListener(display);
         game.begin();
-        */
+
     }
 
     public GameFragment() {
+    }
+
+    @Override
+    public final void gameEvent(final GameEvent e) {
+        //Todo: reresh progress bar and status text
     }
 
     @Override
@@ -106,7 +111,6 @@ public class GameFragment extends Fragment {
         display.setDisplayBoard(new EmptyBoard());
         statusBar = (ProgressBar) rootView.findViewById(R.id.progressBarStatus);
         statusText = (TextView) rootView.findViewById(R.id.textViewStatus);
-
         return rootView;
     }
 

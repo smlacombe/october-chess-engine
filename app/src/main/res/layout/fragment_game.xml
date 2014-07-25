@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="lab3.log530.com.lab3.gui.GameFragment"
-    android:id="@+id/game_fragment">
+    tools:context="lab3.log530.com.lab3.gui.ScreenSlideActivity">
 
     <!-- TODO: Update blank fragment layout -->
 
