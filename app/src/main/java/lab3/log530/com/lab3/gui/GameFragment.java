@@ -79,6 +79,7 @@ public class GameFragment extends Fragment implements GameListener {
         display.invalidate();
         //setSize(getPreferredSize());
 
+        //todo: initialize progress bar and status text
         //progress.setGame(game);
         game.addGameListener(this);
         game.addGameListener(display);

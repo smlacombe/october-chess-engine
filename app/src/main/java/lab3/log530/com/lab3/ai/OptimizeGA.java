@@ -1,5 +1,7 @@
 package lab3.log530.com.lab3.ai;
 
+import android.util.Log;
+
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Game;
 import lab3.log530.com.lab3.GameEvent;
@@ -17,9 +19,7 @@ import java.util.logging.Logger;
  */
 public class OptimizeGA implements GameListener {
 
-    /** This class's Logger. */
-    private static final Logger LOG =
-        Logger.getLogger(OptimizeGA.class.getName());
+    private static final String LOG_TAG = "OptimizeGA";
 
     /** Random number generator.  */
     private static Random rng;
