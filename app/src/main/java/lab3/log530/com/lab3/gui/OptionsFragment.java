@@ -6,11 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 
+import lab3.log530.com.lab3.Board;
+import lab3.log530.com.lab3.Game;
+import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.R;
+import lab3.log530.com.lab3.ai.Minimax;
+import lab3.log530.com.lab3.boards.Gothic;
+import lab3.log530.com.lab3.boards.StandardBoard;
 
 
 /**
@@ -40,7 +47,9 @@ public class OptionsFragment extends Fragment {
     private RadioButton rButtonComputerB;
     private RadioGroup radioGroupW;
     private RadioGroup radioGroupB;
-
+    private Button newGameButton;
+    private RadioButton rButtonStandardType;
+    private RadioButton rButtonGothicType;
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
@@ -85,8 +94,14 @@ public class OptionsFragment extends Fragment {
         rButtonComputerB = (RadioButton) rootView.findViewById(R.id.rBComputerB);
         enableOrDisableRadioButton();
 
+        rButtonStandardType = (RadioButton) rootView.findViewById(R.id.rBStandardType);
+        rButtonGothicType = (RadioButton) rootView.findViewById(R.id.rBGothicType);
+
         radioGroupW.setOnCheckedChangeListener(new LevelRadioGroupListener());
         radioGroupB.setOnCheckedChangeListener(new LevelRadioGroupListener());
+
+        newGameButton = (Button) rootView.findViewById(R.id.button);
+        newGameButton.setOnClickListener(new NewGameListener());
 
         return rootView;
     }
@@ -111,6 +126,57 @@ public class OptionsFragment extends Fragment {
             enableOrDisableRadioButton();
         }
     };
+
+    class NewGameListener implements Button.OnClickListener {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+    /**
+     * Create a new Player instance based on the given string.
+     *
+     * @param game the game the player will be playing
+     * @return player of named type
+     */
+    private Player createPlayer(final Game game, RadioButton rButtonCPU) {
+        if (rButtonCPU.isChecked()) {
+            return new Minimax(game, "default");
+        } else {
+            //return display.getPlayer();
+            return null;
+        }
+    }
+
+    /**
+     * Create a new Board instance based on the given string.
+     *
+     * @return board of named type
+     */
+    private Board createBoard() {
+
+        if (rButtonStandardType.isChecked()) {
+            return new StandardBoard();
+        } else if (rButtonGothicType.isChecked()) {
+            return new Gothic();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get the game selected/created by the user.
+     *
+     * @return the new game
+     */
+    public final Game getGame() {
+        Game game = new Game(createBoard());
+        Player white = createPlayer(game, rButtonComputerW);
+        Player black = createPlayer(game, rButtonComputerB);
+        game.seat(white, black);
+        return game;
+    }
 
     /**
      * Returns the page number represented by this fragment object.

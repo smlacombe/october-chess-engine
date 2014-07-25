@@ -5,8 +5,15 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.TextView;
 
+import lab3.log530.com.lab3.Game;
+import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.R;
+import lab3.log530.com.lab3.ai.Minimax;
+import lab3.log530.com.lab3.boards.EmptyBoard;
 
 
 /**
@@ -24,10 +31,24 @@ public class GameFragment extends Fragment {
      */
     public static final String ARG_PAGE = "page";
 
+    ViewGroup rootView;
+
     /**
      * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
      */
     private int mPageNumber;
+
+    /** The board display. */
+    private BoardView display;
+
+    /** The progress bar on the display. */
+    private ProgressBar statusBar;
+
+    /** Status texty. */
+    private TextView statusText;
+
+    /** The current game. */
+    private Game game;
 
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
@@ -38,6 +59,31 @@ public class GameFragment extends Fragment {
         args.putInt(ARG_PAGE, pageNumber);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    /**
+     * Set up a new game.
+     */
+    public final void newGame() {
+        // Todo: récupérer la game créée dans OptionsFragment
+/*
+        if (newGame == null) {
+            return;
+        }
+        if (game != null) {
+            game.end();
+        }
+        game = newGame;
+        Board board = game.getBoard();
+        display.setBoard(board);
+        display.invalidate();
+        setSize(getPreferredSize());
+
+        progress.setGame(game);
+        game.addGameListener(this);
+        game.addGameListener(display);
+        game.begin();
+        */
     }
 
     public GameFragment() {
@@ -53,8 +99,13 @@ public class GameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout containing a title and body text.
-        ViewGroup rootView = (ViewGroup) inflater
+        rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_game, container, false);
+
+        display =  (BoardView) rootView.findViewById(R.id.gameboard);
+        display.setDisplayBoard(new EmptyBoard());
+        statusBar = (ProgressBar) rootView.findViewById(R.id.progressBarStatus);
+        statusText = (TextView) rootView.findViewById(R.id.textViewStatus);
 
         return rootView;
     }
