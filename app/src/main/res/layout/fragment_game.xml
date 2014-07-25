@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="lab3.log530.com.lab3.gui.GameFragment">
+    tools:context="lab3.log530.com.lab3.gui.GameFragment"
+    android:id="@+id/game_fragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -16,7 +17,7 @@
         <lab3.log530.com.lab3.gui.BoardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/gameboard"
+            android:id="@+id/boardView"
             android:layout_gravity="center"
             android:layout_weight="0.85" />
 

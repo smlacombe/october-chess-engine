@@ -102,7 +102,7 @@ public class GameFragment extends Fragment {
         rootView = (ViewGroup) inflater
                 .inflate(R.layout.fragment_game, container, false);
 
-        display =  (BoardView) rootView.findViewById(R.id.gameboard);
+        display =  (BoardView) rootView.findViewById(R.id.boardView);
         display.setDisplayBoard(new EmptyBoard());
         statusBar = (ProgressBar) rootView.findViewById(R.id.progressBarStatus);
         statusText = (TextView) rootView.findViewById(R.id.textViewStatus);

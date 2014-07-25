@@ -1,5 +1,7 @@
 package lab3.log530.com.lab3.gui;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -130,7 +132,7 @@ public class OptionsFragment extends Fragment {
     class NewGameListener implements Button.OnClickListener {
         @Override
         public void onClick(View view) {
-
+            //showGameFragment();
         }
     };
 
@@ -165,6 +167,18 @@ public class OptionsFragment extends Fragment {
         }
     }
 
+    private void showGameFragment()
+    {
+        FragmentManager manager = getFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        // marche pas findFragmentById renvoie null
+
+        //GameFragment gameFragment = (GameFragment) manager.findFragmentById(R.id.gameFragment);
+        //transaction.show(gameFragment);
+        transaction.hide(this);
+        transaction.commit();
+    }
     /**
      * Get the game selected/created by the user.
      *
