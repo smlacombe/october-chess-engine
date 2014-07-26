@@ -1,20 +1,35 @@
 package lab3.log530.com.lab3.gui;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.applantation.android.svg.SVG;
+import com.applantation.android.svg.SVGParser;
+
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Position;
 import lab3.log530.com.lab3.MoveList;
 import lab3.log530.com.lab3.Piece;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
-import android.graphics.drawable.shapes.RoundRectShape;
+import lab3.log530.com.lab3.R;
 
 public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -100,7 +115,26 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Canvas canvas = holder.lockCanvas(null);
+        Canvas canvas = holder.lockCanvas();
+
+        onDraw(canvas);
+
+        holder.unlockCanvasAndPost(canvas);
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
 
         canvas.drawColor(Color.WHITE);
         pixelSize = canvas.getWidth()/8;
@@ -121,22 +155,58 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
+        //SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.chess_adt45);
+        //Picture picture = svg.getPicture();
 
-        holder.unlockCanvasAndPost(canvas);
+        Picture picture = null;
+        try {
+            //Class res = R.raw.class;
+            //Resources.getSystem().getIdentifier("chess_adt45", "raw", "lab3.log530.com.lab3");
+
+            //Field field = res.getField("chess_adt45");
+            //int drawableId = Resources.getSystem().getIdentifier("chess_adt45", "raw", "lab3.log530.com.lab3");
+            //int drawableId = field.getInt(null);
+
+            //SVG svg = SVGParser.getSVGFromResource(getResources(), drawableId);
+            File file = new File("../res/raw/chess_adt45.svg");
+            InputStream is = new BufferedInputStream(new FileInputStream(file));
+
+            SVG svg = SVGParser.getSVGFromInputStream(is);
+            picture = svg.getPicture();
+        }
+        catch(Exception e) {
+            Log.e("MyTag", "Failure to get drawable id.", e);
+        }
+
+        for(int y = 0 ; y < nbCasesHeight ; y++) {
+            for(int x = 0 ; x < nbCasesWidth ; x++) {
+                Piece piece = board.getPiece(new Position(x, y));
+                Rect rect = new Rect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize);
+                //if (piece != null) {
+                    canvas.drawPicture(picture, rect);
+                    /*Image tile = piece.getImage();
+                    int yy = y;
+                    if (flipped) {
+                        yy = board.getHeight() - 1 - y;
+                    }
+                    at.setToTranslation(x * TILE_SIZE, yy * TILE_SIZE);
+                    g.drawImage(tile, at, null);*/
+                //}
+            }
+        }
+
+
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
 
+        if(action == MotionEvent.ACTION_DOWN) {
+            invalidate();
+        }
+
+        return true;
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-
-    }
 }

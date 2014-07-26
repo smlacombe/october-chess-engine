@@ -1,9 +1,18 @@
 package lab3.log530.com.lab3;
 
+import android.content.res.Resources;
+import android.graphics.Picture;
+import android.util.Log;
+
+import com.applantation.android.svg.SVG;
+import com.applantation.android.svg.SVGParser;
+
 import lab3.log530.com.lab3.pieces.ImageServer;
 //TODO
 //import java.awt.Image;
+import lab3.log530.com.lab3.R;
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * The abstract base class for implementing lab3 pieces. Implementing
@@ -30,6 +39,8 @@ public abstract class Piece implements Serializable {
 
     /** The board this piece is on. */
     private Board board;
+
+    private Picture picture;
 
     /** Movement counter. */
     private int moved = 0;
@@ -89,6 +100,18 @@ public abstract class Piece implements Serializable {
     protected Piece(final Side owner, final String pieceName) {
         side = owner;
         name = pieceName;
+
+        try {
+            Class res = R.raw.class;
+            Field field = res.getField("chess_adt45");
+            int drawableId = field.getInt(null);
+
+            //SVG svg = SVGParser.getSVGFromResource(getResources(), drawableId);
+            //picture = svg.getPicture();
+        }
+        catch(Exception e) {
+            Log.e("MyTag", "Failure to get drawable id.", e);
+        }
     }
 
     /**
@@ -162,10 +185,9 @@ public abstract class Piece implements Serializable {
      *
      * @return     image for this piece
      */
-    public final void/*Image*/ getImage() {
-
-        //@TODO
-        /*return ImageServer.getTile(name + "-" + side);*/
+    public final Picture getImage() {
+        return picture;
+        //return ImageServer.getTile(name + "-" + side);
     }
 
     /**
