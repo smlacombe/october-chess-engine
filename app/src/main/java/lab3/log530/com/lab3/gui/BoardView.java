@@ -1,8 +1,6 @@
 package lab3.log530.com.lab3.gui;
 
 import android.content.Context;
-import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -15,11 +13,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import com.applantation.android.svg.SVG;
-import com.applantation.android.svg.SVGParser;
-
-import lab3.log530.com.lab3.App;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.GameEvent;
 import lab3.log530.com.lab3.GameListener;
@@ -27,27 +20,22 @@ import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.Position;
 import lab3.log530.com.lab3.MoveList;
 import lab3.log530.com.lab3.Piece;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.View;
 import android.view.animation.Transformation;
-
 import lab3.log530.com.lab3.R;
 
-public class BoardView extends SurfaceView implements View.OnTouchListener, SurfaceHolder.Callback, Player, GameListener {
+
+public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
     private int tileSize = 0;
+
+    private GameViewThread thread;
 
     private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
@@ -100,25 +88,19 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
     /** The move selected by the player. */
     private Move selectedMove;
 
+
+    public BoardView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        getHolder().addCallback(this);
+        thread = new GameViewThread(getHolder(), this);
+    }
+
     @Override
     public final void gameEvent(final GameEvent e) {
         board = e.getGame().getBoard();
         if (e.getType() != GameEvent.STATUS) {
             invalidate();
         }
-    }
-
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        int touchType = motionEvent.getAction();
-        if (touchType == MotionEvent.ACTION_UP)
-        {
-            doTouchAction(motionEvent);
-            invalidate();
-            return true;
-        }
-        else
-            return false;
     }
 
     /**
@@ -200,12 +182,6 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
         PLAYER;
     }
 
-
-    public BoardView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        getHolder().addCallback(this);
-    }
-
     private void updateSize() {
         setMinimumWidth(MIN_SIZE * board.getWidth());
         setMinimumHeight(MIN_SIZE * board.getHeight());
@@ -245,7 +221,6 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
         latch = new CountDownLatch(1);
         board = turnBoard;
         side = currentSide;
-        invalidate();
         mode = Mode.PLAYER;
         try {
             latch.await();
@@ -257,11 +232,8 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Canvas canvas = holder.lockCanvas();
-
-        onDraw(canvas);
-
-        holder.unlockCanvasAndPost(canvas);
+        thread.setRunning(true);
+        thread.start();
     }
 
     @Override
@@ -271,7 +243,15 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        boolean retry = true;
+        thread.setRunning(false);
+        while (retry) {
+            try {
+                thread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
     @Override
@@ -297,12 +277,13 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
             }
         }
 
+
         for(int y = 0 ; y < nbCasesHeight ; y++) {
             for(int x = 0 ; x < nbCasesWidth ; x++) {
                 Piece piece = board.getPiece(new Position(x, y));
                 if (piece != null) {
                     Picture picture = piece.getImage();
-                    Rect rect = new Rect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize);
+                    Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
                     canvas.drawPicture(picture, rect);
                 }
             }
@@ -316,7 +297,7 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
         int action = event.getAction();
 
         if(action == MotionEvent.ACTION_DOWN) {
-            invalidate();
+            System.out.println("touch!");
         }
 
         return true;
