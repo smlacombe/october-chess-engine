@@ -1,16 +1,24 @@
 package lab3.log530.com.lab3.gui;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Picture;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.applantation.android.svg.SVG;
+import com.applantation.android.svg.SVGParser;
+
+import lab3.log530.com.lab3.App;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.GameEvent;
 import lab3.log530.com.lab3.GameListener;
@@ -18,17 +26,25 @@ import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.Position;
 import lab3.log530.com.lab3.MoveList;
 import lab3.log530.com.lab3.Piece;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.View;
+import lab3.log530.com.lab3.R;
 
 public class BoardView extends SurfaceView implements View.OnTouchListener, SurfaceHolder.Callback, Player, GameListener {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
-    private int pixelSize = 0;
+    private int tileSize = 0;
 
     private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
@@ -206,27 +222,9 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Canvas canvas = holder.lockCanvas(null);
+        Canvas canvas = holder.lockCanvas();
 
-        canvas.drawColor(Color.WHITE);
-        pixelSize = canvas.getWidth()/8;
-
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
-
-        for(int y = 0 ; y < nbCasesHeight ; y++) {
-            for(int x = 0 ; x < nbCasesWidth ; x++) {
-                if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
-                    paint.setColor(DARK);
-                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
-                }
-                else {
-                    paint.setColor(LIGHT);
-                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
-                }
-            }
-        }
-
+        onDraw(canvas);
 
         holder.unlockCanvasAndPost(canvas);
     }
@@ -243,6 +241,57 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
 
     @Override
     protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        canvas.drawColor(Color.WHITE);
+        tileSize = canvas.getWidth()/8;
+
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+
+        for(int y = 0 ; y < nbCasesHeight ; y++) {
+            for(int x = 0 ; x < nbCasesWidth ; x++) {
+                if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
+                    paint.setColor(DARK);
+                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
+                }
+                else {
+                    paint.setColor(LIGHT);
+                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
+                }
+            }
+        }
+
+        for(int y = 0 ; y < nbCasesHeight ; y++) {
+            for(int x = 0 ; x < nbCasesWidth ; x++) {
+                //Piece piece = board.getPiece(new Position(x, y));
+                /*if (piece != null) {
+                    Picture picture = piece.getImage();
+                    Rect rect = new Rect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize);
+                    canvas.drawPicture(picture, rect);
+                    /*Image tile = piece.getImage();
+                    int yy = y;
+                    if (flipped) {
+                        yy = board.getHeight() - 1 - y;
+                    }
+                    at.setToTranslation(x * TILE_SIZE, yy * TILE_SIZE);
+                    g.drawImage(tile, at, null);*/
+                //}
+            }
+        }
+
 
     }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int action = event.getAction();
+
+        if(action == MotionEvent.ACTION_DOWN) {
+            invalidate();
+        }
+
+        return true;
+    }
+
 }
