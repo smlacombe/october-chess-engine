@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.Picture;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -34,9 +35,11 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
+import android.graphics.drawable.shapes.RoundRectShape;
+import android.view.View;
 import lab3.log530.com.lab3.R;
 
-public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
+public class BoardView extends SurfaceView implements View.OnTouchListener, SurfaceHolder.Callback, Player, GameListener {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
@@ -102,6 +105,58 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         }
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        int touchType = motionEvent.getAction();
+        if (touchType == MotionEvent.ACTION_UP)
+        {
+            doTouchAction(motionEvent);
+            invalidate();
+            return true;
+        }
+        else
+            return false;
+    }
+
+    /**
+     * Handle the event when a simple touch is done
+     *
+     * @param motionEvent the motion event
+     */
+    private void doTouchAction(final MotionEvent motionEvent)
+    {
+        if (mode == Mode.WAIT) {
+            return;
+        }
+
+        Position pos = new Position((int) motionEvent.getX(), (int) motionEvent.getY());
+    }
+
+    /**
+     * Determine which tile a pixel point belongs to.
+     *
+     * @param p the point
+     * @return  the position on the board
+     */
+    private Position getPixelPosition(final PointF p) {
+        PointF pout = null;
+
+        /*
+        try {
+            pout = getTransform().inverseTransform(p, null);
+        } catch (java.awt.geom.NoninvertibleTransformException t) {
+            return null;
+        }
+        */
+
+        int x = (int) (pout.x / TILE_SIZE);
+        int y = (int) (pout.y / TILE_SIZE);
+        if (flipped) {
+            y = board.getHeight() - 1 - y;
+        }
+        return new Position(x, y);
+    }
+
     /** The interaction modes. */
     private enum Mode {
         /** Don't interact with the player. */
@@ -122,6 +177,15 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     }
 
     /**
+     * Return the desired aspect ratio of the board.
+     *
+     * @return desired aspect ratio
+     */
+    public final double getRatio() {
+        return board.getWidth() / (1.0 * board.getHeight());
+    }
+
+    /**
      * Change the board to be displayed.
      *
      * @param b the new board
@@ -130,6 +194,14 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         board = b;
         updateSize();
         invalidate();
+    }
+
+    /**
+     * Set whether or not the board should be displayed flipped.
+     * @param value  the new flipped state
+     */
+    public final void setFlipped(final boolean value) {
+        flipped = value;
     }
 
     @Override
