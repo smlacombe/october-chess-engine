@@ -30,9 +30,6 @@ import lab3.log530.com.lab3.R;
 
 public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
 
-    private int nbCasesHeight = 8;
-    private int nbCasesWidth = 8;
-
     private int tileSize = 0;
 
     private GameViewThread thread;
@@ -259,13 +256,13 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         super.onDraw(canvas);
 
         canvas.drawColor(Color.WHITE);
-        tileSize = canvas.getWidth()/8;
+        tileSize = canvas.getWidth()/board.getWidth();
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
 
-        for(int y = 0 ; y < nbCasesHeight ; y++) {
-            for(int x = 0 ; x < nbCasesWidth ; x++) {
+        for(int y = 0 ; y < board.getHeight() ; y++) {
+            for(int x = 0 ; x < board.getWidth() ; x++) {
                 if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
                     paint.setColor(DARK);
                     canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
@@ -278,8 +275,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         }
 
 
-        for(int y = 0 ; y < nbCasesHeight ; y++) {
-            for(int x = 0 ; x < nbCasesWidth ; x++) {
+        for(int y = 0 ; y < board.getHeight() ; y++) {
+            for(int x = 0 ; x < board.getWidth() ; x++) {
                 Piece piece = board.getPiece(new Position(x, y));
                 if (piece != null) {
                     Picture picture = piece.getImage();

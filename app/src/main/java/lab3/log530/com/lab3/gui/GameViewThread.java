@@ -23,10 +23,13 @@ public class GameViewThread extends Thread {
         while (myThreadRun) {
             Canvas c = null;
             try {
-                c = threadSurfaceHolder.lockCanvas(null);
-                synchronized (threadSurfaceHolder) {
-                    threadGameView.onDraw(c);
+                if(myThreadRun) {
+                    c = threadSurfaceHolder.lockCanvas(null);
+                    synchronized (threadSurfaceHolder) {
+                        threadGameView.onDraw(c);
+                    }
                 }
+
             } finally {
                 // do this in a finally so that if an exception is thrown
                 // during the above, we don't leave the Surface in an
@@ -35,6 +38,11 @@ public class GameViewThread extends Thread {
                     threadSurfaceHolder.unlockCanvasAndPost(c);
                 }
             }
+        }
+        try {
+            wait(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
