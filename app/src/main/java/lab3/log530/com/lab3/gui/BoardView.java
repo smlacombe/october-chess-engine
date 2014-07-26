@@ -5,6 +5,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Picture;
@@ -37,6 +38,8 @@ import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.view.View;
+import android.view.animation.Transformation;
+
 import lab3.log530.com.lab3.R;
 
 public class BoardView extends SurfaceView implements View.OnTouchListener, SurfaceHolder.Callback, Player, GameListener {
@@ -128,8 +131,33 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
         if (mode == Mode.WAIT) {
             return;
         }
-
-        Position pos = new Position((int) motionEvent.getX(), (int) motionEvent.getY());
+        Position pos = getPixelPosition(new PointF(motionEvent.getX(), motionEvent.getY()));
+        if (!board.inRange(pos)) {
+            /* Click was outside the board, somehow. */
+            return;
+        }
+        if (pos != null) {
+            if (pos.equals(selected)) {
+                /* Deselect */
+                selected = null;
+                moves = null;
+            } else if (moves != null && moves.containsDest(pos)) {
+                /* Move selected piece */
+                mode = Mode.WAIT;
+                Move move = moves.getMoveByDest(pos);
+                selected = null;
+                moves = null;
+                selectedMove = move;
+                latch.countDown();
+            } else {
+                /* Select this position */
+                Piece p = board.getPiece(pos);
+                if (p != null && p.getSide() == side) {
+                    selected = pos;
+                    moves = p.getMoves(true);
+                }
+            }
+        }
     }
 
     /**
@@ -139,22 +167,29 @@ public class BoardView extends SurfaceView implements View.OnTouchListener, Surf
      * @return  the position on the board
      */
     private Position getPixelPosition(final PointF p) {
-        PointF pout = null;
+        Matrix scaledMatrix = getScaledMatrix();
+        Matrix inverseMatrix = new Matrix();
+        scaledMatrix.invert(inverseMatrix);
+        float[] touchPoint = new float[] {p.x,p.y};
+        inverseMatrix.mapPoints(touchPoint);
 
-        /*
-        try {
-            pout = getTransform().inverseTransform(p, null);
-        } catch (java.awt.geom.NoninvertibleTransformException t) {
-            return null;
-        }
-        */
-
-        int x = (int) (pout.x / TILE_SIZE);
-        int y = (int) (pout.y / TILE_SIZE);
+        int x = (int) (touchPoint[0] / TILE_SIZE);
+        int y = (int) (touchPoint[1]  / TILE_SIZE);
         if (flipped) {
             y = board.getHeight() - 1 - y;
         }
         return new Position(x, y);
+    }
+
+    /**
+     * Return the transform between working space and drawing space.
+     *
+     * @return display transform
+     */
+    public final Matrix getScaledMatrix() {
+        Matrix m = new Matrix();
+        m.setScale((float)(getWidth() / (TILE_SIZE * board.getWidth())), (float) (getHeight() / (TILE_SIZE * board.getHeight())));
+        return m;
     }
 
     /** The interaction modes. */
