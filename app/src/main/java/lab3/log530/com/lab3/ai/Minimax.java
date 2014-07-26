@@ -1,7 +1,10 @@
 package lab3.log530.com.lab3.ai;
 
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.util.Log;
-
+import android.R;
+import lab3.log530.com.lab3.App;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Game;
 import lab3.log530.com.lab3.Move;
@@ -144,7 +147,15 @@ public class Minimax implements Player {
         }
 
         String filename = name + ".properties";
-        InputStream in = Minimax.class.getResourceAsStream(filename);
+        Resources resources = App.getContext().getResources();
+        AssetManager assetManager = resources.getAssets();
+        InputStream in = null;
+        try {
+            in = assetManager.open(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try {
             props.load(in);
         } catch (java.io.IOException e) {

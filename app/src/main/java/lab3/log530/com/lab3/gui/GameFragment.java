@@ -84,7 +84,6 @@ public class GameFragment extends Fragment implements GameListener {
         game.addGameListener(this);
         game.addGameListener(display);
         game.begin();
-
     }
 
     public GameFragment() {
