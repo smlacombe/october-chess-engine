@@ -22,12 +22,15 @@ import lab3.log530.com.lab3.Piece;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
 
+
 public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
 
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
     private int tileSize = 0;
+
+    private GameViewThread thread;
 
     private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
@@ -79,6 +82,13 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     /** The move selected by the player. */
     private Move selectedMove;
+
+
+    public BoardView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        getHolder().addCallback(this);
+        thread = new GameViewThread(getHolder(), this);
+    }
 
     @Override
     public final void gameEvent(final GameEvent e) {
@@ -135,12 +145,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         PLAYER;
     }
 
-
-    public BoardView(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
-        getHolder().addCallback(this);
-    }
-
     private void updateSize() {
         setMinimumWidth(MIN_SIZE * board.getWidth());
         setMinimumHeight(MIN_SIZE * board.getHeight());
@@ -180,7 +184,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         latch = new CountDownLatch(1);
         board = turnBoard;
         side = currentSide;
-        //invalidate();
         mode = Mode.PLAYER;
         try {
             latch.await();
@@ -192,11 +195,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        Canvas canvas = holder.lockCanvas();
-
-        onDraw(canvas);
-
-        holder.unlockCanvasAndPost(canvas);
+        thread.setRunning(true);
+        thread.start();
     }
 
     @Override
@@ -206,7 +206,15 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        boolean retry = true;
+        thread.setRunning(false);
+        while (retry) {
+            try {
+                thread.join();
+                retry = false;
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
     @Override
@@ -237,13 +245,9 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             for(int x = 0 ; x < nbCasesWidth ; x++) {
                 Piece piece = board.getPiece(new Position(x, y));
                 if (piece != null) {
-                    System.out.println("not null   PosX:"+x+"     PosY:"+y);
                     Picture picture = piece.getImage();
                     Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
                     canvas.drawPicture(picture, rect);
-                }
-                else{
-                    System.out.println("null   PosX:"+x+"     PosY:"+y);
                 }
             }
         }
@@ -257,11 +261,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
         if(action == MotionEvent.ACTION_DOWN) {
             System.out.println("touch!");
-            Canvas canvas = getHolder().lockCanvas();
-
-            onDraw(canvas);
-
-            getHolder().unlockCanvasAndPost(canvas);
         }
 
         return true;
