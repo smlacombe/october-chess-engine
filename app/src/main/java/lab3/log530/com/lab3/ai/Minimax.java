@@ -1,5 +1,10 @@
 package lab3.log530.com.lab3.ai;
 
+import android.content.res.AssetManager;
+import android.content.res.Resources;
+import android.util.Log;
+import android.R;
+import lab3.log530.com.lab3.App;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Game;
 import lab3.log530.com.lab3.Move;
@@ -37,9 +42,7 @@ import java.util.logging.Logger;
  */
 public class Minimax implements Player {
 
-    /** This class's Logger. */
-    private static final Logger LOG =
-        Logger.getLogger("Minimax");
+    private static final String LOG_TAG = "Minimax";
 
     /** The number of threads to use. */
     private static final int NTHREADS =
@@ -144,16 +147,24 @@ public class Minimax implements Player {
         }
 
         String filename = name + ".properties";
-        InputStream in = Minimax.class.getResourceAsStream(filename);
+        Resources resources = App.getContext().getResources();
+        AssetManager assetManager = resources.getAssets();
+        InputStream in = null;
+        try {
+            in = assetManager.open(filename);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         try {
             props.load(in);
         } catch (java.io.IOException e) {
-            LOG.warning("Failed to load AI config: " + name + ": " + e);
+            Log.w(LOG_TAG, "Failed to load AI config: " + name + ": " + e);
         } finally {
             try {
                 in.close();
             } catch (IOException e) {
-                LOG.info("failed to close stream: " + e.getMessage());
+                Log.i(LOG_TAG, "failed to close stream: " + e.getMessage());
             }
         }
         return props;
@@ -207,9 +218,9 @@ public class Minimax implements Player {
                     bestMove = m;
                 }
             } catch (ExecutionException e) {
-                LOG.warning("move went unevaluated: " + e.getMessage());
+                Log.w(LOG_TAG, "move went unevaluated: " + e.getMessage());
             } catch (InterruptedException e) {
-                LOG.warning("move went unevaluated: " + e.getMessage());
+                Log.w(LOG_TAG, "move went unevaluated: " + e.getMessage());
             }
             if (game != null) {
                 game.setProgress(i / (1.0f * (submitted - 1)));
@@ -217,7 +228,7 @@ public class Minimax implements Player {
         }
 
         long time = (System.currentTimeMillis() - startTime);
-        LOG.info("AI took " + (time / MILLI) + " seconds (" +
+        Log.i(LOG_TAG, "AI took " + (time / MILLI) + " seconds (" +
                  NTHREADS + " threads, " + maxDepth + " plies)");
         return bestMove;
     }

@@ -30,13 +30,13 @@ public final class ChessApplet /*extends JApplet*/ implements GameListener {
             String lnf = UIManager.getSystemLookAndFeelClassName();
             UIManager.setLookAndFeel(lnf);
         } catch (IllegalAccessException e) {
-            LOG.warning("Failed to access 'Look and Feel'");
+            Log.w("Failed to access 'Look and Feel'");
         } catch (InstantiationException e) {
-            LOG.warning("Failed to instantiate 'Look and Feel'");
+            Log.w("Failed to instantiate 'Look and Feel'");
         } catch (ClassNotFoundException e) {
-            LOG.warning("Failed to find 'Look and Feel'");
+            Log.w("Failed to find 'Look and Feel'");
         } catch (UnsupportedLookAndFeelException e) {
-            LOG.warning("Failed to set 'Look and Feel'");
+            Log.w("Failed to set 'Look and Feel'");
         }*/
 
         StandardBoard board = new StandardBoard();

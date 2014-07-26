@@ -132,7 +132,12 @@ public class OptionsFragment extends Fragment {
     class NewGameListener implements Button.OnClickListener {
         @Override
         public void onClick(View view) {
-            //showGameFragment();
+            ScreenSlideActivity activity = ((ScreenSlideActivity) getActivity());
+            activity.switchFragment(R.id.action_game);
+
+            GameFragment gameFragment = activity.getGameFragment();
+            Game game = getGame(gameFragment.getDisplay());
+            gameFragment.newGame(game);
         }
     };
 
@@ -142,12 +147,11 @@ public class OptionsFragment extends Fragment {
      * @param game the game the player will be playing
      * @return player of named type
      */
-    private Player createPlayer(final Game game, RadioButton rButtonCPU) {
+    private Player createPlayer(final Game game, RadioButton rButtonCPU, Player display) {
         if (rButtonCPU.isChecked()) {
             return new Minimax(game, "default");
         } else {
-            //return display.getPlayer();
-            return null;
+            return display;
         }
     }
 
@@ -167,27 +171,15 @@ public class OptionsFragment extends Fragment {
         }
     }
 
-    private void showGameFragment()
-    {
-        FragmentManager manager = getFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        // marche pas findFragmentById renvoie null
-
-        //GameFragment gameFragment = (GameFragment) manager.findFragmentById(R.id.gameFragment);
-        //transaction.show(gameFragment);
-        transaction.hide(this);
-        transaction.commit();
-    }
     /**
      * Get the game selected/created by the user.
      *
      * @return the new game
      */
-    public final Game getGame() {
+    public final Game getGame(Player displayBoard) {
         Game game = new Game(createBoard());
-        Player white = createPlayer(game, rButtonComputerW);
-        Player black = createPlayer(game, rButtonComputerB);
+        Player white = createPlayer(game, rButtonComputerW, displayBoard);
+        Player black = createPlayer(game, rButtonComputerB, displayBoard);
         game.seat(white, black);
         return game;
     }

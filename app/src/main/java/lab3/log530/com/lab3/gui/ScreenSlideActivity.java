@@ -18,6 +18,7 @@ package lab3.log530.com.lab3.gui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentActivity;
@@ -50,6 +51,9 @@ public class ScreenSlideActivity extends FragmentActivity {
      * and next wizard steps.
      */
     private ViewPager mPager;
+
+    private GameFragment gameFragment;
+    private OptionsFragment optionsFragment;
 
     /**
      * The pager adapter, which provides the pages to the view pager widget.
@@ -90,7 +94,16 @@ public class ScreenSlideActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        boolean returnValue = switchFragment(item.getItemId());
+        if (returnValue)
+            return true;
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean  switchFragment(int fragmentId)
+    {
+        switch (fragmentId) {
 
             case R.id.action_options:
                 // Go to the previous step in the wizard. If there is no previous step,
@@ -104,8 +117,17 @@ public class ScreenSlideActivity extends FragmentActivity {
                 mPager.setCurrentItem(mPager.getCurrentItem() + 1);
                 return true;
         }
+        return false;
+    }
 
-        return super.onOptionsItemSelected(item);
+    public OptionsFragment getOptionsFragment()
+    {
+        return optionsFragment;
+    }
+
+    public GameFragment getGameFragment()
+    {
+        return gameFragment;
     }
 
     /**
@@ -117,12 +139,23 @@ public class ScreenSlideActivity extends FragmentActivity {
             super(fm);
         }
 
+        public void getDD()
+        {
+
+        }
         @Override
         public Fragment getItem(int position) {
             if(position == 0)
-                return OptionsFragment.create(position);
+            {
+               optionsFragment= OptionsFragment.create(position);
+               return optionsFragment;
+            }
+
             else
-                return GameFragment.create(position);
+            {
+               gameFragment = GameFragment.create(position);
+               return gameFragment;
+            }
         }
 
         @Override
