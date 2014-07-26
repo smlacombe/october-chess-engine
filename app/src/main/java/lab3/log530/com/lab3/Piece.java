@@ -2,6 +2,7 @@ package lab3.log530.com.lab3;
 
 import android.content.res.Resources;
 import android.graphics.Picture;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.applantation.android.svg.SVG;
@@ -101,6 +102,7 @@ public abstract class Piece implements Serializable {
         side = owner;
         name = pieceName;
 
+        System.out.println(name.toLowerCase()+"_"+side);
         try {
             Class res = R.raw.class;
             String sideName = side.toString();
@@ -111,7 +113,7 @@ public abstract class Piece implements Serializable {
             picture = svg.getPicture();
         }
         catch(Exception e) {
-            Log.e("MyTag", "Failure to get drawable id.", e);
+            Log.w("MyTag", "Failure to get drawable id.", e);
         }
     }
 
