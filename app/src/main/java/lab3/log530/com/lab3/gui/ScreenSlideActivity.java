@@ -52,6 +52,9 @@ public class ScreenSlideActivity extends FragmentActivity {
      */
     private ViewPager mPager;
 
+    private GameFragment gameFragment;
+    private OptionsFragment optionsFragment;
+
     /**
      * The pager adapter, which provides the pages to the view pager widget.
      */
@@ -119,12 +122,12 @@ public class ScreenSlideActivity extends FragmentActivity {
 
     public OptionsFragment getOptionsFragment()
     {
-        return (OptionsFragment) ((ScreenSlidePagerAdapter) mPagerAdapter).getItem(0);
+        return optionsFragment;
     }
 
     public GameFragment getGameFragment()
     {
-        return (GameFragment) ((ScreenSlidePagerAdapter) mPagerAdapter).getItem(1);
+        return gameFragment;
     }
 
     /**
@@ -143,9 +146,16 @@ public class ScreenSlideActivity extends FragmentActivity {
         @Override
         public Fragment getItem(int position) {
             if(position == 0)
-                return OptionsFragment.create(position);
+            {
+               optionsFragment= OptionsFragment.create(position);
+               return optionsFragment;
+            }
+
             else
-                return GameFragment.create(position);
+            {
+               gameFragment = GameFragment.create(position);
+               return gameFragment;
+            }
         }
 
         @Override

@@ -108,7 +108,7 @@ public class GameFragment extends Fragment implements GameListener {
                 .inflate(R.layout.fragment_game, container, false);
 
         display =  (BoardView) rootView.findViewById(R.id.boardView);
-        display.setDisplayBoard(new EmptyBoard());
+        display.setBoard(new EmptyBoard());
         statusBar = (ProgressBar) rootView.findViewById(R.id.progressBarStatus);
         statusText = (TextView) rootView.findViewById(R.id.textViewStatus);
         return rootView;

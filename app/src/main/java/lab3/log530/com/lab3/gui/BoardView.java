@@ -100,12 +100,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         getHolder().addCallback(this);
     }
 
-    public void setDisplayBoard(final Board displayBoard)
-    {
-        board = displayBoard;
-        updateSize();
-    }
-
     private void updateSize() {
         setMinimumWidth(MIN_SIZE * board.getWidth());
         setMinimumHeight(MIN_SIZE * board.getHeight());
