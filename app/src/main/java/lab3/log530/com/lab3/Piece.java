@@ -40,7 +40,7 @@ public abstract class Piece implements Serializable {
     /** The board this piece is on. */
     private Board board;
 
-    private Picture picture;
+    private Picture picture = null;
 
     /** Movement counter. */
     private int moved = 0;
@@ -103,11 +103,12 @@ public abstract class Piece implements Serializable {
 
         try {
             Class res = R.raw.class;
-            Field field = res.getField("chess_adt45");
+            String sideName = side.toString();
+            Field field = res.getField(name.toLowerCase()+"_"+sideName.toLowerCase());
             int drawableId = field.getInt(null);
-
-            //SVG svg = SVGParser.getSVGFromResource(getResources(), drawableId);
-            //picture = svg.getPicture();
+            Resources resources = App.getContext().getResources();
+            SVG svg = SVGParser.getSVGFromResource(resources, drawableId);
+            picture = svg.getPicture();
         }
         catch(Exception e) {
             Log.e("MyTag", "Failure to get drawable id.", e);
@@ -187,7 +188,6 @@ public abstract class Piece implements Serializable {
      */
     public final Picture getImage() {
         return picture;
-        //return ImageServer.getTile(name + "-" + side);
     }
 
     /**

@@ -1,6 +1,8 @@
 package lab3.log530.com.lab3.gui;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,6 +17,7 @@ import android.view.SurfaceView;
 import com.applantation.android.svg.SVG;
 import com.applantation.android.svg.SVGParser;
 
+import lab3.log530.com.lab3.App;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.GameEvent;
 import lab3.log530.com.lab3.GameListener;
@@ -38,7 +41,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     private int nbCasesHeight = 8;
     private int nbCasesWidth = 8;
 
-    private int pixelSize = 0;
+    private int tileSize = 0;
 
     private static final String LOG_TAG = "BoardView";
     /** Size of a tile in working coordinates. */
@@ -169,7 +172,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         super.onDraw(canvas);
 
         canvas.drawColor(Color.WHITE);
-        pixelSize = canvas.getWidth()/8;
+        tileSize = canvas.getWidth()/8;
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
@@ -178,43 +181,21 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             for(int x = 0 ; x < nbCasesWidth ; x++) {
                 if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
                     paint.setColor(DARK);
-                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
+                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
                 }
                 else {
                     paint.setColor(LIGHT);
-                    canvas.drawRect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize, paint);
+                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
                 }
             }
         }
 
-        //SVG svg = SVGParser.getSVGFromResource(getResources(), R.raw.chess_adt45);
-        //Picture picture = svg.getPicture();
-
-        Picture picture = null;
-        try {
-            //Class res = R.raw.class;
-            //Resources.getSystem().getIdentifier("chess_adt45", "raw", "lab3.log530.com.lab3");
-
-            //Field field = res.getField("chess_adt45");
-            //int drawableId = Resources.getSystem().getIdentifier("chess_adt45", "raw", "lab3.log530.com.lab3");
-            //int drawableId = field.getInt(null);
-
-            //SVG svg = SVGParser.getSVGFromResource(getResources(), drawableId);
-            File file = new File("../res/raw/chess_adt45.svg");
-            InputStream is = new BufferedInputStream(new FileInputStream(file));
-
-            SVG svg = SVGParser.getSVGFromInputStream(is);
-            picture = svg.getPicture();
-        }
-        catch(Exception e) {
-            Log.e("MyTag", "Failure to get drawable id.", e);
-        }
-
         for(int y = 0 ; y < nbCasesHeight ; y++) {
             for(int x = 0 ; x < nbCasesWidth ; x++) {
-                Piece piece = board.getPiece(new Position(x, y));
-                Rect rect = new Rect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize);
-                //if (piece != null) {
+                //Piece piece = board.getPiece(new Position(x, y));
+                /*if (piece != null) {
+                    Picture picture = piece.getImage();
+                    Rect rect = new Rect(x*pixelSize, y*pixelSize, (x*pixelSize)+pixelSize, (y*pixelSize)+pixelSize);
                     canvas.drawPicture(picture, rect);
                     /*Image tile = piece.getImage();
                     int yy = y;
