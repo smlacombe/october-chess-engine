@@ -52,6 +52,11 @@ public class OptionsFragment extends Fragment {
     private Button newGameButton;
     private RadioButton rButtonStandardType;
     private RadioButton rButtonGothicType;
+
+    /** Configuration names corresponding to LABELS_AI. */
+    private static final String[] NAMES_AI = {
+            "depth2", "depth3", "depth4", "depth5", "depth6", "depth7", "depth8",
+    };
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
      */
@@ -142,20 +147,6 @@ public class OptionsFragment extends Fragment {
     };
 
     /**
-     * Create a new Player instance based on the given string.
-     *
-     * @param game the game the player will be playing
-     * @return player of named type
-     */
-    private Player createPlayer(final Game game, RadioButton rButtonCPU, Player display) {
-        if (rButtonCPU.isChecked()) {
-            return new Minimax(game, "default");
-        } else {
-            return display;
-        }
-    }
-
-    /**
      * Create a new Board instance based on the given string.
      *
      * @return board of named type
@@ -172,14 +163,33 @@ public class OptionsFragment extends Fragment {
     }
 
     /**
+     * Create a new Player instance based on the given string.
+     *
+     * @param game the game the player will be playing
+     * @return player of named type
+     */
+    private Player createPlayer(final Game game, RadioButton rButtonCPU, Spinner levelSpinner, Player display) {
+        if (rButtonCPU.isChecked()) {
+            int level = levelSpinner.getSelectedItemPosition();
+            if (level < 0) {
+                return new Minimax(game, "default");
+            } else {
+                return new Minimax(game, NAMES_AI[level]);
+            }
+        } else {
+            return display;
+        }
+    }
+
+    /**
      * Get the game selected/created by the user.
      *
      * @return the new game
      */
     public final Game getGame(Player displayBoard) {
         Game game = new Game(createBoard());
-        Player white = createPlayer(game, rButtonComputerW, displayBoard);
-        Player black = createPlayer(game, rButtonComputerB, displayBoard);
+        Player white = createPlayer(game, rButtonComputerW, levelSpinnerW, displayBoard);
+        Player black = createPlayer(game, rButtonComputerB, levelSpinnerB, displayBoard);
         game.seat(white, black);
         return game;
     }

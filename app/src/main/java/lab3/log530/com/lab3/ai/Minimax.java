@@ -173,6 +173,7 @@ public class Minimax implements Player {
     @Override
     public final Move takeTurn(final Board board,
                                final Piece.Side currentSide) {
+        Log.i(LOG_TAG, "Take turn");
         side = currentSide;
 
         /* Gather up every move. */
