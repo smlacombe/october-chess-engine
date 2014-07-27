@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.Picture;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -66,6 +67,15 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     /** Preferred size of a tile, in pixels. */
     static final int PREF_SIZE = 75;
+
+    /** Padding between the highlight and tile border. */
+    static final int HIGHLIGHT_PADDING = 7;
+
+    static final int HIGHLIGHT_WIDTH = 6;
+
+    static final int HIGHLIGHT_ROUND_RECT_X_RADIUS = 10;
+
+    static final int HIGHLIGHT_ROUND_RECT_Y_RADIUS = 10;
 
     /** The current interaction mode. */
     private Mode mode = Mode.WAIT;
@@ -311,24 +321,43 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             Move last = board.last();
             if (last != null) {
                 paint.setColor(LAST);
-            //highlight(g, last.getOrigin());
-            //highlight(g, last.getDest());
+                highlight(paint, canvas, last.getOrigin());
+                highlight(paint, canvas, last.getDest());
             }
 
             // Draw selected square
             if (selected != null) {
                 paint.setColor(SELECTED);
-                //highlight(g, selected);
+                highlight(paint, canvas, selected);
 
                 // Draw piece moves
                 if (moves != null) {
                     paint.setColor(MOVEMENT);
                     for (Move move : moves) {
-                        //highlight(g, move.getDest());
+                        highlight(paint, canvas, move.getDest());
                     }
                 }
             }
             thread.setPaused(true);
         }
+    }
+
+    /**
+     * Highlight the given tile on the board using the current color.
+     *
+     * @param canvas   the drawing surface
+     * @param pos position to highlight
+     */
+    private void highlight(final Paint paint, final Canvas canvas, final Position pos) {
+        int x = pos.getX();
+        int y = pos.getY();
+        if (flipped) {
+            y = board.getHeight() - 1 - y;
+        }
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(HIGHLIGHT_WIDTH);
+
+        RectF rectF = new RectF(x * tileSize+HIGHLIGHT_PADDING, y * tileSize + HIGHLIGHT_PADDING, (x * tileSize) + tileSize - HIGHLIGHT_PADDING, (y * tileSize) + tileSize - HIGHLIGHT_PADDING);
+        canvas.drawRoundRect(rectF, HIGHLIGHT_ROUND_RECT_X_RADIUS, HIGHLIGHT_ROUND_RECT_Y_RADIUS, paint);
     }
 }

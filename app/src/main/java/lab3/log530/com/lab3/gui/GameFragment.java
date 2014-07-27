@@ -94,13 +94,13 @@ public class GameFragment extends Fragment implements GameListener {
     @Override
     public final void gameEvent(final GameEvent e) {
         //Todo: reresh progress bar and status text
-        if (myGame != null) {
-            statusBar.setProgress(Math.round(myGame.getProgress() * 100));
-
-            if (myGame.getStatus() != "" || myGame.getStatus() != null) {
-                statusText.setText(myGame.getStatus());
-            }
-        }
+//        if (myGame != null) {
+//            statusBar.setProgress(Math.round(myGame.getProgress() * 100));
+//
+//            if (myGame.getStatus() != "" || myGame.getStatus() != null) {
+//                statusText.setText(myGame.getStatus());
+//            }
+//        }
     }
 
     @Override
