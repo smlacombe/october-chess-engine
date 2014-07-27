@@ -256,37 +256,60 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         super.onDraw(canvas);
 
         canvas.drawColor(Color.WHITE);
-        tileSize = canvas.getWidth()/board.getWidth();
 
-        Paint paint = new Paint();
-        paint.setAntiAlias(true);
+        if(board != null) {
+            tileSize = canvas.getWidth() / board.getWidth();
 
-        for(int y = 0 ; y < board.getHeight() ; y++) {
-            for(int x = 0 ; x < board.getWidth() ; x++) {
-                if(((x+1)%2 == 0 && (y+1)%2 != 0) || ((x+1)%2 != 0 && (y+1)%2 == 0)) {
-                    paint.setColor(DARK);
-                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
+            Paint paint = new Paint();
+            paint.setAntiAlias(true);
+
+            for (int y = 0; y < board.getHeight(); y++) {
+                for (int x = 0; x < board.getWidth(); x++) {
+                    if (((x + 1) % 2 == 0 && (y + 1) % 2 != 0) || ((x + 1) % 2 != 0 && (y + 1) % 2 == 0)) {
+                        paint.setColor(DARK);
+                        canvas.drawRect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize, paint);
+                    } else {
+                        paint.setColor(LIGHT);
+                        canvas.drawRect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize, paint);
+                    }
                 }
-                else {
-                    paint.setColor(LIGHT);
-                    canvas.drawRect(x*tileSize, y*tileSize, (x*tileSize)+tileSize, (y*tileSize)+tileSize, paint);
+            }
+
+
+            for (int y = 0; y < board.getHeight(); y++) {
+                for (int x = 0; x < board.getWidth(); x++) {
+                    Piece piece = board.getPiece(new Position(x, y));
+                    if (piece != null) {
+                        Picture picture = piece.getImage();
+                        Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
+                        canvas.drawPicture(picture, rect);
+                    }
+                }
+            }
+
+
+            // Draw last move
+            Move last = board.last();
+            if (last != null) {
+                paint.setColor(LAST);
+            //highlight(g, last.getOrigin());
+            //highlight(g, last.getDest());
+            }
+
+            // Draw selected square
+            if (selected != null) {
+                paint.setColor(SELECTED);
+                //highlight(g, selected);
+
+                // Draw piece moves
+                if (moves != null) {
+                    paint.setColor(MOVEMENT);
+                    for (Move move : moves) {
+                        //highlight(g, move.getDest());
+                    }
                 }
             }
         }
-
-
-        for(int y = 0 ; y < board.getHeight() ; y++) {
-            for(int x = 0 ; x < board.getWidth() ; x++) {
-                Piece piece = board.getPiece(new Position(x, y));
-                if (piece != null) {
-                    Picture picture = piece.getImage();
-                    Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
-                    canvas.drawPicture(picture, rect);
-                }
-            }
-        }
-
-
     }
 
     @Override

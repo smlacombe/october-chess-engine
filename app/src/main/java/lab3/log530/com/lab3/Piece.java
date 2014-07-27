@@ -112,7 +112,7 @@ public abstract class Piece implements Serializable {
             picture = svg.getPicture();
         }
         catch(Exception e) {
-            Log.w("Piece", "Failure to get drawable id.", e);
+            Log.w("Piece", "Failure to get image resources for "+name.toLowerCase()+"_"+side+".");
         }
     }
 
