@@ -159,6 +159,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     moves = p.getMoves(true);
                 }
             }
+            thread.setPaused(false);
         }
     }
 
