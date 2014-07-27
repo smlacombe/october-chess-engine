@@ -90,7 +90,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public final void gameEvent(final GameEvent e) {
         board = e.getGame().getBoard();
         if (e.getType() != GameEvent.STATUS) {
-            invalidate();
+            //invalidate();
         }
     }
 
@@ -215,7 +215,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public final void setBoard(final Board b) {
         board = b;
         updateSize();
-        invalidate();
+        //invalidate();
     }
 
     /**
