@@ -22,10 +22,6 @@ import lab3.log530.com.lab3.MoveList;
 import lab3.log530.com.lab3.Piece;
 import java.util.concurrent.CountDownLatch;
 import lab3.log530.com.lab3.Move;
-import android.graphics.drawable.shapes.RoundRectShape;
-import android.view.View;
-import android.view.animation.Transformation;
-import lab3.log530.com.lab3.R;
 
 
 public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Player, GameListener {
@@ -35,8 +31,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     private GameViewThread thread;
 
     private static final String LOG_TAG = "BoardView";
-    /** Size of a tile in working coordinates. */
-    private static final double TILE_SIZE = 200.0;
 
    // private static final Shape
 
@@ -100,6 +94,23 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         }
     }
 
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+
+        int action = event.getAction();
+        Log.i("Motion", "onTouchEvent: " + action);
+        if (action == MotionEvent.ACTION_UP)
+        {
+            System.out.println("touch up!");
+            doTouchAction(event);
+            //invalidate();
+            return true;
+        }
+
+        return true;
+    }
+
     /**
      * Handle the event when a simple touch is done
      *
@@ -107,10 +118,13 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
      */
     private void doTouchAction(final MotionEvent motionEvent)
     {
+        Log.i("Motion", "dotouch");
         if (mode == Mode.WAIT) {
+            System.out.println("We wait");
             return;
         }
         Position pos = getPixelPosition(new PointF(motionEvent.getX(), motionEvent.getY()));
+        System.out.println("Position detected x:" + pos.getX() + " y: " + pos.getY());
         if (!board.inRange(pos)) {
             /* Click was outside the board, somehow. */
             return;
@@ -152,8 +166,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         float[] touchPoint = new float[] {p.x,p.y};
         inverseMatrix.mapPoints(touchPoint);
 
-        int x = (int) (touchPoint[0] / TILE_SIZE);
-        int y = (int) (touchPoint[1]  / TILE_SIZE);
+        int x = (int) (touchPoint[0] / tileSize);
+        int y = (int) (touchPoint[1]  / tileSize);
         if (flipped) {
             y = board.getHeight() - 1 - y;
         }
@@ -167,7 +181,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
      */
     public final Matrix getScaledMatrix() {
         Matrix m = new Matrix();
-        m.setScale((float)(getWidth() / (TILE_SIZE * board.getWidth())), (float) (getHeight() / (TILE_SIZE * board.getHeight())));
+        m.setScale((float)(getWidth() / (tileSize * board.getWidth())), (float) (getHeight() / (tileSize * board.getHeight())));
         return m;
     }
 
@@ -276,12 +290,18 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             }
 
 
-            for (int y = 0; y < board.getHeight(); y++) {
+
+            for(int y = 0 ; y < board.getHeight() ; y++) {
                 for (int x = 0; x < board.getWidth(); x++) {
                     Piece piece = board.getPiece(new Position(x, y));
                     if (piece != null) {
                         Picture picture = piece.getImage();
-                        Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
+                        int yy = y;
+                        if (flipped) {
+                            yy = board.getHeight() - 1 - y;
+                        }
+
+                        Rect rect = new Rect(x * tileSize, yy * tileSize, (x * tileSize) + tileSize, (yy * tileSize) + tileSize);
                         canvas.drawPicture(picture, rect);
                     }
                 }
@@ -311,16 +331,4 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             }
         }
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        int action = event.getAction();
-
-        if(action == MotionEvent.ACTION_DOWN) {
-            System.out.println("touch!");
-        }
-
-        return true;
-    }
-
 }
