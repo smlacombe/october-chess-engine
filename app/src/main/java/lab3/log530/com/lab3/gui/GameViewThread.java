@@ -1,36 +1,46 @@
 package lab3.log530.com.lab3.gui;
 
 import android.graphics.Canvas;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class GameViewThread extends Thread {
 
     private SurfaceHolder threadSurfaceHolder;
     private BoardView threadGameView;
-    private boolean myThreadRun = false;
+    private boolean isRunning = false;
+    private boolean isPaused = false;
 
     public GameViewThread(SurfaceHolder surfaceHolder, BoardView surfaceView) {
         threadSurfaceHolder = surfaceHolder;
         threadGameView = surfaceView;
     }
 
-    public void setRunning(boolean b) {
-        myThreadRun = b;
+    public void setRunning(boolean isRunning) {
+        this.isRunning = isRunning;
+    }
+
+    public void setPaused(boolean isPaused) {
+        this.isPaused = isPaused;
     }
 
     @Override
     public void run() {
-        while (myThreadRun) {
+        while (isRunning) {
             Canvas c = null;
             try {
-                if(myThreadRun) {
+                if(isRunning) {
                     c = threadSurfaceHolder.lockCanvas(null);
                     synchronized (threadSurfaceHolder) {
                         threadGameView.onDraw(c);
                     }
                 }
 
-            } finally {
+            }
+            catch(Exception e) {
+                this.interrupt();
+            }
+            finally {
                 // do this in a finally so that if an exception is thrown
                 // during the above, we don't leave the Surface in an
                 // inconsistent state
@@ -38,11 +48,14 @@ public class GameViewThread extends Thread {
                     threadSurfaceHolder.unlockCanvasAndPost(c);
                 }
             }
-        }
-        try {
-            wait(10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            if(isPaused) {
+                try {
+                    this.wait();
+                }
+                catch(Exception e) {
+                    Log.e("GameViewThread","Error in the waiting of the thread GameView");
+                }
+            }
         }
     }
 }

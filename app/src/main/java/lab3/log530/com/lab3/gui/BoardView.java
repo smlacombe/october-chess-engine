@@ -100,7 +100,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public final void gameEvent(final GameEvent e) {
         board = e.getGame().getBoard();
         if (e.getType() != GameEvent.STATUS) {
-            invalidate();
+            thread.setPaused(false);
         }
     }
 
@@ -114,7 +114,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
         {
             System.out.println("touch up!");
             doTouchAction(event);
-            //invalidate();
             return true;
         }
 
@@ -225,7 +224,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public final void setBoard(final Board b) {
         board = b;
         updateSize();
-        invalidate();
+        //invalidate();
     }
 
     /**
@@ -339,6 +338,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     }
                 }
             }
+            thread.setPaused(true);
         }
     }
 
