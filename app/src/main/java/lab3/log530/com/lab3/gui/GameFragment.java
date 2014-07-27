@@ -48,11 +48,11 @@ public class GameFragment extends Fragment implements GameListener {
     /** The progress bar on the display. */
     private ProgressBar statusBar;
 
-    /** Status texty. */
+    /** Status text. */
     private TextView statusText;
 
     /** The current game. */
-    private Game game;
+    private Game myGame;
 
     /**
      * Factory method for this fragment class. Constructs a new fragment for the given page number.
@@ -74,6 +74,7 @@ public class GameFragment extends Fragment implements GameListener {
      * Set up a new game.
      */
     public final void newGame(Game game) {
+        myGame = game;
         Board board = game.getBoard();
         display.setBoard(board);
         display.invalidate();
@@ -81,6 +82,7 @@ public class GameFragment extends Fragment implements GameListener {
 
         //todo: initialize progress bar and status text
         //progress.setGame(game);
+        statusText.setText("Chess game for Android");
         game.addGameListener(this);
         game.addGameListener(display);
         game.begin();
@@ -92,6 +94,13 @@ public class GameFragment extends Fragment implements GameListener {
     @Override
     public final void gameEvent(final GameEvent e) {
         //Todo: reresh progress bar and status text
+        if (myGame != null) {
+            statusBar.setProgress(Math.round(myGame.getProgress() * 100));
+
+            if (myGame.getStatus() != "" || myGame.getStatus() != null) {
+                statusText.setText(myGame.getStatus());
+            }
+        }
     }
 
     @Override
