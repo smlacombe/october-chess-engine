@@ -48,12 +48,14 @@ public class GameViewThread extends Thread {
                     threadSurfaceHolder.unlockCanvasAndPost(c);
                 }
             }
-            if(isPaused) {
+            while(isPaused) {
                 try {
-                    this.wait();
+                    synchronized (threadSurfaceHolder) {
+                        //sleep(10);
+                    }
                 }
                 catch(Exception e) {
-                    Log.e("GameViewThread","Error in the waiting of the thread GameView");
+                    Log.e("GameViewThread","Error in the waiting of the thread GameView", e);
                 }
             }
         }
