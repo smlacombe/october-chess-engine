@@ -298,7 +298,12 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                 Piece piece = board.getPiece(new Position(x, y));
                 if (piece != null) {
                     Picture picture = piece.getImage();
-                    Rect rect = new Rect(x * tileSize, y * tileSize, (x * tileSize) + tileSize, (y * tileSize) + tileSize);
+                    int yy = y;
+                    if (flipped) {
+                        yy = board.getHeight() - 1 - y;
+                    }
+
+                    Rect rect = new Rect(x * tileSize, yy * tileSize, (x * tileSize) + tileSize, (yy * tileSize) + tileSize);
                     canvas.drawPicture(picture, rect);
                 }
             }
