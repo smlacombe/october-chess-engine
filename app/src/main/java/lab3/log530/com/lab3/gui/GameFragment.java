@@ -9,7 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
-
+import android.os.Handler;
+import android.os.Looper;
 import lab3.log530.com.lab3.Board;
 import lab3.log530.com.lab3.Game;
 import lab3.log530.com.lab3.GameEvent;
@@ -93,14 +94,19 @@ public class GameFragment extends Fragment implements GameListener {
 
     @Override
     public final void gameEvent(final GameEvent e) {
-        //Todo: refresh progress bar and status text
-        if (myGame != null) {
-            statusBar.setProgress(Math.round(myGame.getProgress()));
+        Handler refresh = new Handler(Looper.getMainLooper());
+        refresh.post(new Runnable() {
+            public void run()
+            {
+                if (myGame != null) {
+                    statusBar.setProgress(Math.round(myGame.getProgress()*100));
 
-            if (myGame.getStatus() != "" || myGame.getStatus() != null) {
-                statusText.setText(myGame.getStatus());
+                    if (myGame.getStatus() != "" || myGame.getStatus() != null) {
+                        statusText.setText(myGame.getStatus());
+                    }
+                }
             }
-        }
+        });
     }
 
     @Override
