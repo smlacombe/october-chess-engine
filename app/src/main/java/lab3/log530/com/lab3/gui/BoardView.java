@@ -51,6 +51,9 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     /** The color for the light tiles on the board. */
     static final int LIGHT = Color.rgb(255, 206, 158);
 
+    /** The color for the light tiles on the board. */
+    static final int LIGHT_BLUE = Color.rgb(51, 204, 255);
+
     /** Border color for a selected tile. */
     static final int SELECTED = Color.rgb(0, 255, 255);
 
@@ -77,6 +80,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     /** The current interaction mode. */
     private Mode mode = Mode.WAIT;
+
+    private Position dragPosition;
 
     /** Current player making a move, when interactive. */
     private Piece.Side side;
@@ -131,13 +136,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public boolean onTouchEvent(MotionEvent event) {
 
         int action = event.getAction();
-        Log.i("Motion", "onTouchEvent: " + action);
-        if (action == MotionEvent.ACTION_UP)
-        {
-            System.out.println("touch up!");
+        if ((action == MotionEvent.ACTION_DOWN) || (action == MotionEvent.ACTION_UP) || (action == MotionEvent.ACTION_MOVE))
             doTouchAction(event);
-            return true;
-        }
 
         return true;
     }
@@ -149,41 +149,97 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
      */
     private void doTouchAction(final MotionEvent motionEvent)
     {
-        Log.i("Motion", "dotouch");
         if (mode == Mode.WAIT) {
             System.out.println("We wait");
             return;
         }
+
         Position pos = getPixelPosition(new PointF(motionEvent.getX(), motionEvent.getY()));
-        System.out.println("Position detected x:" + pos.getX() + " y: " + pos.getY());
+
         if (!board.inRange(pos)) {
-            /* Click was outside the board, somehow. */
+                /* Click was outside the board, somehow. */
             return;
         }
-        if (pos != null) {
-            if (pos.equals(selected)) {
-                /* Deselect */
-                selected = null;
-                moves = null;
-            } else if (moves != null && moves.containsDest(pos)) {
-                /* Move selected piece */
-                mode = Mode.WAIT;
-                Move move = moves.getMoveByDest(pos);
-                selected = null;
-                moves = null;
-                selectedMove = move;
-                latch.countDown();
-            } else {
-                /* Select this position */
-                Piece p = board.getPiece(pos);
-                if (p != null && p.getSide() == side) {
-                    selected = pos;
-                    moves = p.getMoves(true);
+
+        if (pos != null)
+        {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.i("Motion", "dotouch");
+                System.out.println("Position detected x:" + pos.getX() + " y: " + pos.getY());
+
+                if (pos != null) {
+                    if (pos.equals(selected)) {
+                        deselect();
+                    }
+                    else if (selected != null && board.getPiece(pos) == null)
+                    {
+                        moveSelectedPiece(pos);
+                    } else {
+                        selectCurrentPosition(pos);
+                    }
                 }
             }
+            else if (motionEvent.getAction() == MotionEvent.ACTION_UP)
+            {
+                if (!pos.equals(selected))
+                {
+                    if (moves != null && moves.containsDest(pos))
+                    {
+                        moveSelectedPiece(pos);
+                    }
+                    else
+                    {
+                        deselect();
+                    }
+                    dragPosition = null;
+                }
+            }
+            else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE)
+            {
+                if (selected != null)
+                {
+                    Log.i("move", "moving");
+                    dragPosition = pos;
+                    refresh();
+                }
+            }
+        }
+    }
 
+    private void deselect()
+    {
+          /* Deselect */
+        selected = null;
+        moves = null;
+        dragPosition = null;
+        refresh();
+    }
+
+    private void moveSelectedPiece(Position pos)
+    {
+        if (moves != null && moves.containsDest(pos))
+        {
+                /* Move selected piece */
+            mode = Mode.WAIT;
+            Move move = moves.getMoveByDest(pos);
+            selected = null;
+            moves = null;
+            selectedMove = move;
+            latch.countDown();
+            dragPosition = null;
             refresh();
         }
+    }
+    private void selectCurrentPosition(Position pos)
+    {
+             /* Select this position */
+        Piece p = board.getPiece(pos);
+        if (p != null && p.getSide() == side) {
+            selected = pos;
+            moves = p.getMoves(true);
+            refresh();
+        }
+
     }
 
     /**
@@ -321,12 +377,39 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     Piece piece = board.getPiece(new Position(x, y));
                     if (piece != null) {
                         Picture picture = piece.getImage();
-                        int yy = y;
+
+                        int yy = 0;
+                        int xx = 0;
+
+
+                        /*
+                        if (dragPosition != null && dragPosition.getX() == x && dragPosition.getY() == y)
+                        {
+                            //picture.
+                            xx = dragPosition.getX();
+                            yy = dragPosition.getX();
+                            paint.setColor(LIGHT_BLUE);
+                            paint.setAlpha(100);
+                            canvas.drawRect(xx * tileSize, yy * tileSize, (xx * tileSize) + tileSize, (yy * tileSize) + tileSize, paint);
+                            paint.setAlpha(255);
+                        }
+                        else
+                        {
+                            xx = x;
+                            yy = y;
+                            if (flipped) {
+                                yy = board.getHeight() - 1 - y;
+                            }
+                        }
+                        */
+
+                        xx = x;
+                        yy = y;
                         if (flipped) {
                             yy = board.getHeight() - 1 - y;
                         }
 
-                        Rect rect = new Rect(x * tileSize, yy * tileSize, (x * tileSize) + tileSize, (yy * tileSize) + tileSize);
+                        Rect rect = new Rect(xx * tileSize, yy * tileSize, (xx * tileSize) + tileSize, (yy * tileSize) + tileSize);
                         canvas.drawPicture(picture, rect);
                     }
                 }
@@ -354,7 +437,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     }
                 }
             }
-
         }
     }
 
