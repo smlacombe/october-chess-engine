@@ -1,7 +1,5 @@
 package lab3.log530.com.lab3.gui;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;

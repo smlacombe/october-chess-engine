@@ -2,12 +2,10 @@ package lab3.log530.com.lab3.gui;
 
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,7 +15,6 @@ import lab3.log530.com.lab3.GameEvent;
 import lab3.log530.com.lab3.GameListener;
 import lab3.log530.com.lab3.Player;
 import lab3.log530.com.lab3.R;
-import lab3.log530.com.lab3.ai.Minimax;
 import lab3.log530.com.lab3.boards.EmptyBoard;
 
 
@@ -37,11 +34,6 @@ public class GameFragment extends Fragment implements GameListener {
     public static final String ARG_PAGE = "page";
 
     ViewGroup rootView;
-
-    /**
-     * The fragment's page number, which is set to the argument value for {@link #ARG_PAGE}.
-     */
-    private int mPageNumber;
 
     /** The board display. */
     private BoardView display;
@@ -79,10 +71,7 @@ public class GameFragment extends Fragment implements GameListener {
         Board board = game.getBoard();
         display.setBoard(board);
         display.invalidate();
-        //setSize(getPreferredSize());
 
-        //todo: initialize progress bar and status text
-        //progress.setGame(game);
         statusText.setText("Chess game for Android");
         game.addGameListener(this);
         game.addGameListener(display);
@@ -112,7 +101,6 @@ public class GameFragment extends Fragment implements GameListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPageNumber = getArguments().getInt(ARG_PAGE);
     }
 
     @Override
@@ -127,13 +115,6 @@ public class GameFragment extends Fragment implements GameListener {
         statusBar = (ProgressBar) rootView.findViewById(R.id.progressBarStatus);
         statusText = (TextView) rootView.findViewById(R.id.textViewStatus);
         return rootView;
-    }
-
-    /**
-     * Returns the page number represented by this fragment object.
-     */
-    public int getPageNumber() {
-        return mPageNumber;
     }
 
 }

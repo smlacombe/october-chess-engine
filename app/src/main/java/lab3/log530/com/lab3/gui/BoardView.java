@@ -9,6 +9,8 @@ import android.graphics.PointF;
 import android.graphics.Picture;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -29,11 +31,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     private int tileSize = 0;
 
-    private GameViewThread thread;
-
     private static final String LOG_TAG = "BoardView";
-
-   // private static final Shape
 
     /** The board being displayed. */
     private Board board;
@@ -93,15 +91,39 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public BoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         getHolder().addCallback(this);
-        thread = new GameViewThread(getHolder(), this);
     }
 
     @Override
     public final void gameEvent(final GameEvent e) {
         board = e.getGame().getBoard();
+
         if (e.getType() != GameEvent.STATUS) {
-            thread.setPaused(false);
+            refresh();
         }
+    }
+
+    public boolean refresh() {
+        Handler refresh = new Handler(Looper.getMainLooper());
+        try {
+            refresh.post(new Runnable() {
+                public void run() {
+                    Canvas c = null;
+                    try {
+                        c = getHolder().lockCanvas(null);
+                        onDraw(c);
+                    }
+                    finally {
+                        getHolder().unlockCanvasAndPost(c);
+                    }
+                }
+            });
+        }
+        catch(Exception e) {
+            Log.e("BoardView", "Error refresh canvas");
+            return false;
+        }
+
+        return true;
     }
 
 
@@ -159,7 +181,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     moves = p.getMoves(true);
                 }
             }
-            thread.setPaused(false);
+
+            refresh();
         }
     }
 
@@ -225,7 +248,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
     public final void setBoard(final Board b) {
         board = b;
         updateSize();
-        //invalidate();
+        refresh();
     }
 
     /**
@@ -253,26 +276,17 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        thread.setRunning(true);
-        thread.start();
+        refresh();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        refresh();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        boolean retry = true;
-        thread.setRunning(false);
-        while (retry) {
-            try {
-                thread.join();
-                retry = false;
-            } catch (InterruptedException e) {
-            }
-        }
+
     }
 
     @Override
@@ -287,6 +301,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             Paint paint = new Paint();
             paint.setAntiAlias(true);
 
+            //Draw cases
             for (int y = 0; y < board.getHeight(); y++) {
                 for (int x = 0; x < board.getWidth(); x++) {
                     if (((x + 1) % 2 == 0 && (y + 1) % 2 != 0) || ((x + 1) % 2 != 0 && (y + 1) % 2 == 0)) {
@@ -300,7 +315,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
             }
 
 
-
+            //Draw pieces
             for(int y = 0 ; y < board.getHeight() ; y++) {
                 for (int x = 0; x < board.getWidth(); x++) {
                     Piece piece = board.getPiece(new Position(x, y));
@@ -339,7 +354,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                     }
                 }
             }
-            thread.setPaused(true);
+
         }
     }
 

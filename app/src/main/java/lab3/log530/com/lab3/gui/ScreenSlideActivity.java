@@ -18,7 +18,6 @@ package lab3.log530.com.lab3.gui;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.app.FragmentActivity;
