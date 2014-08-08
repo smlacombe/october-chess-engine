@@ -381,28 +381,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback, Pl
                         int yy = 0;
                         int xx = 0;
 
-
-                        /*
-                        if (dragPosition != null && dragPosition.getX() == x && dragPosition.getY() == y)
-                        {
-                            //picture.
-                            xx = dragPosition.getX();
-                            yy = dragPosition.getX();
-                            paint.setColor(LIGHT_BLUE);
-                            paint.setAlpha(100);
-                            canvas.drawRect(xx * tileSize, yy * tileSize, (xx * tileSize) + tileSize, (yy * tileSize) + tileSize, paint);
-                            paint.setAlpha(255);
-                        }
-                        else
-                        {
-                            xx = x;
-                            yy = y;
-                            if (flipped) {
-                                yy = board.getHeight() - 1 - y;
-                            }
-                        }
-                        */
-
                         xx = x;
                         yy = y;
                         if (flipped) {
